@@ -1,5 +1,5 @@
 name: VillagerFollow
-version: '${project.version}'
+version: '1.7.6'
 main: me.darksnakex.villagerfollow.VillagerFollow
 author: DarkSnakeX
 description: Plugin that makes nearby villagers follow the player using emeralds as a lure.

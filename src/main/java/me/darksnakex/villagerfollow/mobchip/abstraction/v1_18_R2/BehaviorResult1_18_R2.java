@@ -1,0 +1,31 @@
+package me.darksnakex.villagerfollow.mobchip.abstraction.v1_18_R2;
+
+import me.darksnakex.villagerfollow.mobchip.ai.behavior.BehaviorResult;
+import net.minecraft.server.level.WorldServer;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.ai.behavior.Behavior;
+import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
+
+final class BehaviorResult1_18_R2 extends BehaviorResult {
+   private final Behavior<? super EntityLiving> b;
+   private final EntityInsentient mob;
+   private final WorldServer l;
+
+   public BehaviorResult1_18_R2(Behavior<? super EntityLiving> b, EntityInsentient mob) {
+      this.b = b;
+      this.mob = mob;
+      this.l = ChipUtil1_18_R2.toNMS(Bukkit.getWorld(mob.s.getWorld().getUID()));
+      b.e(this.l, mob, 0L);
+   }
+
+   @NotNull
+   public BehaviorResult.Status getStatus() {
+      return ChipUtil1_18_R2.fromNMS(this.b.a());
+   }
+
+   public void stop() {
+      this.b.g(this.l, this.mob, 0L);
+   }
+}

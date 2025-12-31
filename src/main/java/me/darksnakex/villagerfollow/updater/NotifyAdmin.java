@@ -1,43 +1,42 @@
 package me.darksnakex.villagerfollow.updater;
 
+import java.util.Objects;
 import me.darksnakex.villagerfollow.VillagerFollow;
 import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.ClickEvent.Action;
+import net.md_5.bungee.api.chat.hover.content.Content;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.Objects;
-
-
 public class NotifyAdmin implements Listener {
+   private static VillagerFollow plugin;
 
-    private static VillagerFollow plugin;
+   public NotifyAdmin(VillagerFollow plugin) {
+      NotifyAdmin.plugin = plugin;
+   }
 
-    public NotifyAdmin(VillagerFollow plugin) {
-        NotifyAdmin.plugin = plugin;
-    }
+   @EventHandler
+   public void notifyUpdate(PlayerJoinEvent event) {
+      FileConfiguration config = plugin.getConfig();
+      FileConfiguration messagesConfig = plugin.getMessages();
+      Player player = event.getPlayer();
+      if (Objects.equals(config.getString("Config.check-update"), "true") && player.isOp()) {
+         (new UpdateChecker(plugin, 111553)).getVersion((version) -> {
+            if (!plugin.getDescription().getVersion().equalsIgnoreCase(version)) {
+               TextComponent message = new TextComponent(plugin.nombre + messagesConfig.getString("version-command.update-available"));
+               message.setClickEvent(new ClickEvent(Action.OPEN_URL, "https://modrinth.com/plugin/villagerfollow"));
+               message.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new Content[]{new Text("Click here to download")}));
+               player.spigot().sendMessage(message);
+            }
 
-    @EventHandler
-    public void notifyUpdate(PlayerJoinEvent event){
-        FileConfiguration config = plugin.getConfig();
-        FileConfiguration messagesConfig = plugin.getMessages();
-        Player player = event.getPlayer();
-        if(Objects.equals(config.getString("Config.check-update"), "true") && player.isOp()) {
-            new UpdateChecker(plugin, 111553).getVersion(version -> {
-                if (!plugin.getDescription().getVersion().equalsIgnoreCase(version)) {
-                    TextComponent message = new TextComponent(plugin.nombre + messagesConfig.getString("version-command.update-available"));
-                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://modrinth.com/plugin/villagerfollow"));
-                    message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click here to download").create()));
-                    player.spigot().sendMessage(message);
-                }
-            });
-        }
-    }
+         });
+      }
 
-
+   }
 }
